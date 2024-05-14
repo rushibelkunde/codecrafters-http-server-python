@@ -20,7 +20,7 @@ def getResponseTxt(method, path, response_body):
         
 def parseRequest(client):
     lines = client.recv(4096).decode().split(' ')
-    print(lines[-1].strip())
+    # print(lines[-1].strip())
     method = lines[0]
     path = lines[1]
     response_body = lines[-1].strip()
@@ -45,8 +45,9 @@ def main():
     while True:
         client, addr = server_socket.accept()
         method, path, response_body = parseRequest(client)
+        print("remote", method, path, response_body)
         response = getResponseTxt(method, path, response_body)
-        print('response',response)
+        # print('response',response)
         threading.Thread(target=sendResponse, args=(client,response ))
 
 
