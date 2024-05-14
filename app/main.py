@@ -18,10 +18,19 @@ def getResponseTxt(method, path, response_body):
         elif "/files" in path:
             f_name = path.split("/")[-1]
             try:
-                with open(argv[2] + f_name) as f:
-                    content = f.read()
-                    cont_length = len(content)
-                    return "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+ str(cont_length)+ "\r\n\r\n"+ content
+                if method == "GET":
+                    with open(argv[2] + f_name) as f:
+                        content = f.read()
+                        cont_length = len(content)
+                       
+                        return f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+ str(cont_length)+ "\r\n\r\n"+ content
+                elif method == "POST":
+            
+                    filepath = f"{argv[2]}/{f_name}"
+                    with open(filepath, "wb") as file:
+                        file.write(response_body.encode("utf-8"))
+                        return f"HTTP/1.1 201 Created\r\n\r\n"
+                     
             except FileNotFoundError:
                     return "HTTP/1.1 404 Not Found\r\n\r\n"    
         else:
