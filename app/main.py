@@ -42,7 +42,7 @@ def parseRequest(client):
     print(lines)
     method = lines[0]
     path = lines[1]
-    response_body = lines[-1].strip()
+    response_body = " ".join(lines[4:]).strip()
     return method, path, response_body
 
 def sendResponse(client,text):
