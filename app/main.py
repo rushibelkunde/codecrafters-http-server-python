@@ -5,7 +5,7 @@ import threading
 from sys import argv
 
 
-def getResponseTxt(method, path, response_body):
+def getResponseTxt(method, path, response_body, lines):
         if path == "/":
             return "HTTP/1.1 200 OK\r\n\r\n"
         elif "/echo" in path:
@@ -13,7 +13,7 @@ def getResponseTxt(method, path, response_body):
             content_length = len(path.split('/')[-1])
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
         elif "/user-agent" in path:
-            content_length = len(response_body)
+            content_length = len(lines[2].split(" ")[1])
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{response_body}"
         elif "/files" in path:
             f_name = path.split("/")[-1]
@@ -37,13 +37,13 @@ def getResponseTxt(method, path, response_body):
             return 'HTTP/1.1 404 Not Found\r\n\r\n'
         
 def parseRequest(client):
-    lines = client.recv(4096).decode().split('\r\n')
+    lines = client.recv(4096).decode().split('')
 
     print("lines",lines)
     method = lines[0].split(' ')[0]
     path =  lines[0].split(' ')[1]
     response_body = lines[-1]
-    return method, path, response_body
+    return method, path, response_body , lines
 
 def sendResponse(client,text):
      client.sendall(text.encode("UTF-8"))
@@ -63,9 +63,9 @@ def main():
 
     while True:
         client, addr = server_socket.accept()
-        method, path, response_body = parseRequest(client)
+        method, path, response_body, lines = parseRequest(client)
         print("remote", method, path, response_body)
-        response = getResponseTxt(method, path, response_body)
+        response = getResponseTxt(method, path, response_body, lines)
         # print('response',response)
         threading.Thread(target=sendResponse, args=(client,response )).start()
 
