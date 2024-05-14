@@ -17,11 +17,13 @@ def getResponseTxt(method, path, response_body):
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{response_body}"
         elif "/files" in path:
             f_name = path.split("/")[-1]
-            with open(argv[2] + f_name) as f:
-                content = f.read()
-                cont_length = len(content)
-                return "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+ str(cont_length)+ "\r\n\r\n"+ content
-                 
+            try:
+                with open(argv[2] + f_name) as f:
+                    content = f.read()
+                    cont_length = len(content)
+                    return "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+ str(cont_length)+ "\r\n\r\n"+ content
+            except FileNotFoundError:
+                    return "HTTP/1.1 404 Not Found\r\n\r\n"    
         else:
             return 'HTTP/1.1 404 Not Found\r\n\r\n'
         
