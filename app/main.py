@@ -13,7 +13,7 @@ def getResponseTxt(method, path, response_body, lines):
             content_length = len(path.split('/')[-1])
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
         elif "/user-agent" in path:
-            content_length = len(lines[2].split(" ")[1]).strip()
+            content_length = len(lines[2].split(" ")[1].strip())
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{response_body}"
         elif "/files" in path:
             f_name = path.split("/")[-1]
