@@ -5,7 +5,7 @@ import threading
 from sys import argv
 
 
-def getResponseTxt(method, path, response_body, lines):
+def getResponseTxt(method, path, response_body):
         if path == "/":
             return "HTTP/1.1 200 OK\r\n\r\n"
         elif "/echo" in path:
@@ -13,9 +13,8 @@ def getResponseTxt(method, path, response_body, lines):
             content_length = len(path.split('/')[-1])
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
         elif "/user-agent" in path:
-            content_length = len(lines[2].split(" ")[1].strip())
-            print("cccc",content_length)
-            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}"
+            content_length = len(response_body)
+            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{response_body}"
         elif "/files" in path:
             f_name = path.split("/")[-1]
             try:
@@ -38,13 +37,13 @@ def getResponseTxt(method, path, response_body, lines):
             return 'HTTP/1.1 404 Not Found\r\n\r\n'
         
 def parseRequest(client):
-    lines = client.recv(4096).decode().split('\r\n')
+    lines = client.recv(4096).decode().split(' ')
 
-    print("lines",lines)
-    method = lines[0].split(' ')[0]
-    path =  lines[0].split(' ')[1]
-    response_body = lines[-1]
-    return method, path, response_body , lines
+    print(lines)
+    method = lines[0]
+    path = lines[1]
+    response_body = " ".join(lines[4:]).split('\r\n\r\n')[1]
+    return method, path, response_body
 
 def sendResponse(client,text):
      client.sendall(text.encode("UTF-8"))
@@ -64,9 +63,9 @@ def main():
 
     while True:
         client, addr = server_socket.accept()
-        method, path, response_body, lines = parseRequest(client)
+        method, path, response_body = parseRequest(client)
         print("remote", method, path, response_body)
-        response = getResponseTxt(method, path, response_body, lines)
+        response = getResponseTxt(method, path, response_body)
         # print('response',response)
         threading.Thread(target=sendResponse, args=(client,response )).start()
 
