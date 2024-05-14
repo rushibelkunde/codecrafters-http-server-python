@@ -40,18 +40,12 @@ def main():
     # server_socket.accept() # wait for client
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
     # server_socket.accept() 
-    
-
-    method, path, response_body = parseRequest(client)
-
-
-    response = getResponseTxt(method, path, response_body)
-
-    print("method and path", method, path)
 
     while True:
-         client, addr = server_socket.accept()
-         threading.Thread(target=sendResponse, args=(client,response ))
+        client, addr = server_socket.accept()
+        method, path, response_body = parseRequest(client)
+        response = getResponseTxt(method, path, response_body)
+        threading.Thread(target=sendResponse, args=(client,response ))
 
 
 
