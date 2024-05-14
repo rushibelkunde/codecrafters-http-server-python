@@ -38,7 +38,8 @@ def getResponseTxt(method, path, response_body):
         
 def parseRequest(client):
     lines = client.recv(4096).decode().split(' ')
-    # print(lines[-1].strip())
+
+    print(lines)
     method = lines[0]
     path = lines[1]
     response_body = lines[-1].strip()
