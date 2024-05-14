@@ -9,6 +9,13 @@ def main():
       
         if path == "/":
             return "HTTP/1.1 200 OK\r\n\r\n"
+        elif "/echo" in path:
+            content = path.split('/')[-1]
+            content_size = len(path.split('/')[-1])
+
+            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_size}\r\n\r\n{content}"
+
+
         else:
             return 'HTTP/1.1 404 Not Found\r\n\r\n'
 
