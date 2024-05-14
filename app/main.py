@@ -12,7 +12,7 @@ def main():
     # server_socket.accept() 
     client, addr = server_socket.accept()
 
-    client.sendall("server connected".encode())
+    client.sendall('HTTP/1.1 200 OK\r\n\r\n'.encode())
 
     
 if __name__ == "__main__":
