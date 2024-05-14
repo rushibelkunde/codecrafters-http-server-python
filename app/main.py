@@ -45,6 +45,7 @@ def main():
         client, addr = server_socket.accept()
         method, path, response_body = parseRequest(client)
         response = getResponseTxt(method, path, response_body)
+        print('response',response)
         threading.Thread(target=sendResponse, args=(client,response ))
 
 
