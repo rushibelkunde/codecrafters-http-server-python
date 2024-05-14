@@ -48,7 +48,7 @@ def main():
         print("remote", method, path, response_body)
         response = getResponseTxt(method, path, response_body)
         # print('response',response)
-        threading.Thread(target=sendResponse, args=(client,response ))
+        threading.Thread(target=sendResponse, args=(client,response )).start()
 
 
 
