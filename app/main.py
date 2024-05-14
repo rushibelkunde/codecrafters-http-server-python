@@ -5,15 +5,21 @@ import socket
 def main():
 
 
-    def getResponse(method, path):
+    def getResponse(method, path, response_body):
       
         if path == "/":
             return "HTTP/1.1 200 OK\r\n\r\n"
         elif "/echo" in path:
             content = path.split('/')[-1]
-            content_size = len(path.split('/')[-1])
+            content_length = len(path.split('/')[-1])
 
-            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_size}\r\n\r\n{content}"
+            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
+        
+        elif "/user-agent" in path:
+            
+            content_length = len(response_body)
+
+            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{response_body}"
 
 
         else:
@@ -34,14 +40,16 @@ def main():
 
     lines = client.recv(4096).decode().split(' ')
 
-    print(lines)
+    print(lines[-1].strip())
 
     
     method = lines[0]
     path = lines[1]
+    response_body = lines[-1].strip()
+
     print("method and path", method, path)
 
-    response = getResponse(method, path)
+    response = getResponse(method, path, response_body)
     client.sendall(response.encode())
 
 
