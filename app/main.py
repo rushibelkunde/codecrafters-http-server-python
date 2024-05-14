@@ -37,7 +37,7 @@ def getResponseTxt(method, path, response_body, lines):
             return 'HTTP/1.1 404 Not Found\r\n\r\n'
         
 def parseRequest(client):
-    lines = client.recv(4096).decode().split('')
+    lines = client.recv(4096).decode().split('\r\n')
 
     print("lines",lines)
     method = lines[0].split(' ')[0]
