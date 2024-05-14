@@ -27,7 +27,7 @@ def parseRequest(client):
     return method, path, response_body
 
 def sendResponse(client,text):
-     client.send(text.encode())
+     client.sendall(text.encode("UTF-8"))
      
 
 def main():
