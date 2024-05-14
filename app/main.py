@@ -28,8 +28,8 @@ def getResponseTxt(method, path, lines):
                 elif method == "POST":
                     body = lines[4].split('\r\n\r\n')[1] + ' '.join(lines[5:])
                     filepath = f"{argv[2]}/{f_name}"
-                    with open(body, "wb") as file:
-                        file.write("".encode("utf-8"))
+                    with open(filepath, "wb") as file:
+                        file.write(body.encode("utf-8"))
                         return f"HTTP/1.1 201 Created\r\n\r\n"
                      
             except FileNotFoundError:
