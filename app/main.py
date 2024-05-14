@@ -2,7 +2,7 @@
 # import socket
 import socket
 import threading
-
+from sys import argv
 
 
 def getResponseTxt(method, path, response_body):
@@ -15,6 +15,13 @@ def getResponseTxt(method, path, response_body):
         elif "/user-agent" in path:
             content_length = len(response_body)
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{response_body}"
+        elif "/files" in path:
+            f_name = path.split()[1].split("/")[2]
+            with open(argv[2] + f_name) as f:
+                content = f.read()
+                cont_length = len(content)
+                return "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+ str(cont_length)+ "\r\n\r\n"+ content
+                 
         else:
             return 'HTTP/1.1 404 Not Found\r\n\r\n'
         
