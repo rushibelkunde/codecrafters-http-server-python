@@ -40,9 +40,9 @@ def parseRequest(client):
     lines = client.recv(4096).decode().split('\r\n')
 
     print("lines",lines)
-    method = lines[0]
-    path = lines[1]
-    response_body = " ".join(lines[4:]).split('\r\n\r\n')[1]
+    method = lines[0].split(' ')[0]
+    path =  lines[0].split(' ')[1]
+    response_body = lines[-1]
     return method, path, response_body
 
 def sendResponse(client,text):
