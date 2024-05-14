@@ -26,9 +26,9 @@ def getResponseTxt(method, path, lines):
                        
                         return f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+ str(cont_length)+ "\r\n\r\n"+ content
                 elif method == "POST":
-            
+                    body = lines[-2].split('\r\n\r\n')[1] + ' '.join(lines[-1])
                     filepath = f"{argv[2]}/{f_name}"
-                    with open(filepath, "wb") as file:
+                    with open(body, "wb") as file:
                         file.write("".encode("utf-8"))
                         return f"HTTP/1.1 201 Created\r\n\r\n"
                      
