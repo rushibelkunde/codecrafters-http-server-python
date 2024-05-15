@@ -26,7 +26,10 @@ def parse_request(request_string):
 
     return method, path, http_version, headers, body
 
-# def validateEncoding(encodings):
+def validateEncoding(encodings):
+    invalid_encodings = ['encoding-1', 'encoding-2', 'invalid_encoding']
+    validateEncodings = filter(lambda encoding: encoding not in invalid_encodings, encodings)
+    return list(validateEncodings)
 
 
 
@@ -38,8 +41,10 @@ def getResponseTxt(method, path, http_version, headers, body):
             content = path.split('/')[-1]
             content_length = len(path.split('/')[-1])
             if("Accept-Encoding" in headers and headers['Accept-Encoding'] != 'invalid-encoding'):
+                validEncoding = validateEncoding(headers['Accept-Encoding'].split(','))
                 print(headers['Accept-Encoding'])
-                return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {headers['Accept-Encoding']}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
+                if len(validEncoding) != 0:
+                    return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
 
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
         elif "/user-agent" in path:
