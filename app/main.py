@@ -56,7 +56,7 @@ def getResponseTxt(method, path, http_version, headers, body):
                             f.write(content_bytes)
                             compressed_content.seek(0)
                             compressed_data = compressed_content.read()
-                          return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(compressed_data)}\r\n\r\n{compressed_data}"
+                          return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(compressed_data)}\r\n\r\n{compressed_data.strip()}"
                     
                     return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
 
