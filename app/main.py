@@ -28,7 +28,7 @@ def validateEncoding(encodings):
 
 def getResponseTxt(method, path, http_version, headers, body):
     if path == "/":
-        return "HTTP/1.1 200 OK\r\n\r\n"
+        return "HTTP/1.1 200 OK\r\n\r\n".encode()
     elif "/echo" in path:
         content = path.split('/')[-1]
         content_length = len(path.split('/')[-1])
@@ -42,12 +42,12 @@ def getResponseTxt(method, path, http_version, headers, body):
                         f.write(content_bytes)
                     compressed_data = compressed_content.getvalue()
                     return b"HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: " + str(len(compressed_data)).encode() + b"\r\n\r\n" + compressed_data
-                return f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
-        return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
+                return f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}".encode()
+        return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}".encode()
     elif "/user-agent" in path:
         content_body = headers['User-Agent']
         content_length = len(content_body)
-        return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content_body}"
+        return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content_body}".encode()
     elif "/files" in path:
         f_name = path.split("/")[-1]
         try:
@@ -55,16 +55,16 @@ def getResponseTxt(method, path, http_version, headers, body):
                 with open(argv[2] + f_name) as f:
                     content = f.read()
                     cont_length = len(content)
-                    return f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+ str(cont_length)+ "\r\n\r\n"+ content
+                    return f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length:{cont_length}\r\n\r\n{content}".encode()
             elif method == "POST":
                 filepath = f"{argv[2]}/{f_name}"
                 with open(filepath, "wb") as file:
                     file.write(body.encode("utf-8"))
-                    return f"HTTP/1.1 201 Created\r\n\r\n"
+                    return f"HTTP/1.1 201 Created\r\n\r\n".encode()
         except FileNotFoundError:
-            return "HTTP/1.1 404 Not Found\r\n\r\n"
+            return "HTTP/1.1 404 Not Found\r\n\r\n".encode()
     else:
-        return 'HTTP/1.1 404 Not Found\r\n\r\n'
+        return 'HTTP/1.1 404 Not Found\r\n\r\n'.encode()
 
 def parseRequest(client):
     lines = client.recv(4096).decode().split(' ')
@@ -73,7 +73,7 @@ def parseRequest(client):
     return method, path, lines
 
 def sendResponse(client, text):
-    client.sendall(text.encode())
+    client.sendall(text)
 
 def main():
     print("Logs from your program will appear here!")
