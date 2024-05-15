@@ -28,7 +28,7 @@ def validateEncoding(encodings):
 
 def getResponseTxt(method, path, http_version, headers, body):
     if path == "/":
-        return b"HTTP/1.1 200 OK\r\n\r\n"
+        return "HTTP/1.1 200 OK\r\n\r\n"
     elif "/echo" in path:
         content = path.split('/')[-1]
         content_length = len(path.split('/')[-1])
@@ -64,23 +64,16 @@ def getResponseTxt(method, path, http_version, headers, body):
         except FileNotFoundError:
             return "HTTP/1.1 404 Not Found\r\n\r\n"
     else:
-        return b'HTTP/1.1 404 Not Found\r\n\r\n'
+        return 'HTTP/1.1 404 Not Found\r\n\r\n'
 
 def parseRequest(client):
-    request = client.recv(4096).decode()
-    if not request:
-        return None, None, None
-
-    lines = request.split(' ')
+    lines = client.recv(4096).decode().split(' ')
     method = lines[0]
     path = lines[1]
     return method, path, lines
 
 def sendResponse(client, text):
-    if text.startswith(b"HTTP"):
-        client.sendall(text)
-    else:
-        client.sendall(b"HTTP/1.1 200 OK\r\n\r\n" + text)
+    client.sendall(text.encode())
 
 def main():
     print("Logs from your program will appear here!")
@@ -89,10 +82,10 @@ def main():
 
     while True:
         client, addr = server_socket.accept()
-        method, path, lines = parseRequest(client)
-        if method is not None and path is not None:
-            response = getResponseTxt(method, path, lines[2], {}, None)  # Headers and body are not used in this scenario
-            threading.Thread(target=sendResponse, args=(client, response)).start()
+        lines = client.recv(4096).decode()
+        method, path, http_version, headers, body = parse_request(lines)
+        response = getResponseTxt(method, path, http_version, headers, body)
+        threading.Thread(target=sendResponse, args=(client, response)).start()
 
 if __name__ == "__main__":
     main()
