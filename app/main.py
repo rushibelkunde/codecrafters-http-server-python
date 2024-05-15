@@ -45,6 +45,9 @@ def getResponseTxt(method, path, http_version, headers, body):
                 validEncoding = validateEncoding(headers['Accept-Encoding'].split(','))
                 print(validEncoding)
                 if len(validEncoding) != 0:
+                    if validEncoding[0] == "gzip":
+                        return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
+                    
                     return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
 
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
