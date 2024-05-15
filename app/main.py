@@ -4,18 +4,43 @@ import socket
 import threading
 from sys import argv
 
+def parse_request(request_string):
+    # Split the request string into lines
+    lines = request_string.split('\r\n')
+    
+    # Extract method, path, and HTTP version from the first line
+    method, path, http_version = lines[0].split()
 
-def getResponseTxt(method, path, lines):
+    # Extract headers
+    headers = {}
+    for line in lines[1:]:
+        if not line:
+            break
+        key, value = line.split(': ', 1)
+        headers[key] = value
+
+    # Extract response body
+    body = None
+    if '\r\n\r\n' in request_string:
+        body = request_string.split('\r\n\r\n', 1)[1]
+
+    return method, path, http_version, headers, body
+
+
+def getResponseTxt(method, path, http_version, headers, body):
         if path == "/":
             return "HTTP/1.1 200 OK\r\n\r\n"
         elif "/echo" in path:
             content = path.split('/')[-1]
             content_length = len(path.split('/')[-1])
-            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
+            if("Accept-Encoding" in headers and headers['Accept-Encoding'] != 'invalid-encoding'):
+                return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {headers['Accept-Encoding']}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
+
+            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
         elif "/user-agent" in path:
-            content = lines[-1].strip()
-            content_length = len( lines[-1].strip())
-            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
+            content_body = headers['User-Agent']
+            content_length = len(content_body)
+            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content_body}"
         elif "/files" in path:
             f_name = path.split("/")[-1]
             try:
@@ -26,7 +51,6 @@ def getResponseTxt(method, path, lines):
                        
                         return f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: "+ str(cont_length)+ "\r\n\r\n"+ content
                 elif method == "POST":
-                    body = lines[4].split('\r\n\r\n')[1] +" "+ ' '.join(lines[5:])
                     filepath = f"{argv[2]}/{f_name}"
                     with open(filepath, "wb") as file:
                         file.write(body.encode("utf-8"))
@@ -38,7 +62,7 @@ def getResponseTxt(method, path, lines):
             return 'HTTP/1.1 404 Not Found\r\n\r\n'
         
 def parseRequest(client):
-    lines = client.recv(4096).decode().split('\r\n')
+    lines = client.recv(4096).decode().split(' ')
 
     print(lines)
     method = lines[0]
@@ -63,9 +87,10 @@ def main():
 
     while True:
         client, addr = server_socket.accept()
-        method, path , lines = parseRequest(client)
+        lines = client.recv(4096).decode()
+        method, path , http_version, headers,  body = parse_request(lines)
         print("remote", method, path)
-        response = getResponseTxt(method, path, lines)
+        response = getResponseTxt(method, path, http_version, headers, body)
         # print('response',response)
         threading.Thread(target=sendResponse, args=(client,response )).start()
 
