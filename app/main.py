@@ -26,6 +26,10 @@ def parse_request(request_string):
 
     return method, path, http_version, headers, body
 
+# def validateEncoding(encodings):
+
+
+
 
 def getResponseTxt(method, path, http_version, headers, body):
         if path == "/":
@@ -34,6 +38,7 @@ def getResponseTxt(method, path, http_version, headers, body):
             content = path.split('/')[-1]
             content_length = len(path.split('/')[-1])
             if("Accept-Encoding" in headers and headers['Accept-Encoding'] != 'invalid-encoding'):
+                print(headers['Accept-Encoding'])
                 return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {headers['Accept-Encoding']}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
 
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
