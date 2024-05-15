@@ -27,6 +27,7 @@ def parse_request(request_string):
     return method, path, http_version, headers, body
 
 def validateEncoding(encodings):
+    print(encodings)
     invalid_encodings = ['encoding-1', 'encoding-2', 'invalid_encoding']
     validateEncodings = filter(lambda encoding: encoding not in invalid_encodings, encodings)
     return list(validateEncodings)
