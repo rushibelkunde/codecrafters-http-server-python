@@ -36,7 +36,7 @@ def getResponseTxt(method, path, http_version, headers, body):
             if("Accept-Encoding" in headers and headers['Accept-Encoding'] != 'invalid-encoding'):
                 return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {headers['Accept-Encoding']}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
 
-            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
+            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(content_length)}\r\n\r\n{content}"
         elif "/user-agent" in path:
             content_body = headers['User-Agent']
             content_length = len(content_body)
