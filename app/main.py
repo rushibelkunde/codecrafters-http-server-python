@@ -42,7 +42,7 @@ def getResponseTxt(method, path, http_version, headers, body):
             content_length = len(path.split('/')[-1])
             if("Accept-Encoding" in headers and headers['Accept-Encoding'] != 'invalid-encoding'):
                 validEncoding = validateEncoding(headers['Accept-Encoding'].split(','))
-                print(headers['Accept-Encoding'])
+                print(validEncoding)
                 if len(validEncoding) != 0:
                     return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
 
