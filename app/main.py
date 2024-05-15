@@ -73,7 +73,7 @@ def parseRequest(client):
     return method, path, lines
 
 def sendResponse(client, text):
-    client.sendall(text)
+    client.sendall(text.encode())
 
 def main():
     print("Logs from your program will appear here!")
