@@ -3,7 +3,7 @@
 import socket
 import threading
 from sys import argv
-
+import gzip
 def parse_request(request_string):
     # Split the request string into lines
     lines = request_string.split('\r\n')
@@ -32,6 +32,9 @@ def validateEncoding(encodings):
     validateEncodings = filter(lambda encoding: encoding.strip() not in invalid_encodings, encodings)
     return list(validateEncodings)
 
+def gzipEncode():
+
+
 
 
 
@@ -46,7 +49,8 @@ def getResponseTxt(method, path, http_version, headers, body):
                 print(validEncoding)
                 if len(validEncoding) != 0:
                     if validEncoding[0] == "gzip":
-                        return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}"
+                        compressed = gzip.compress(content.encode("utf-8"))
+                        return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(compressed)}\r\n\r\n{compressed}"
                     
                     return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
 
