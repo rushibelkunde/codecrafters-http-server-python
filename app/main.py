@@ -32,7 +32,7 @@ def validateEncoding(encodings):
     validateEncodings = filter(lambda encoding: encoding.strip() not in invalid_encodings, encodings)
     return list(validateEncodings)
 
-def gzipEncode():
+
 
 
 
