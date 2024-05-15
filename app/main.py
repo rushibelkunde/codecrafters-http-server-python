@@ -50,13 +50,12 @@ def getResponseTxt(method, path, http_version, headers, body):
                 print(validEncoding)
                 if len(validEncoding) != 0:
                     if validEncoding[0] == "gzip":
-                          content_bytes = content.encode("utf-8")
-                          compressed_content = io.BytesIO()
-                          with gzip.GzipFile(fileobj=compressed_content, mode='w') as f:
+                        content_bytes = content.encode("utf-8")
+                        compressed_content = io.BytesIO()
+                        with gzip.GzipFile(fileobj=compressed_content, mode='wb') as f:
                             f.write(content_bytes)
-                            compressed_content.seek(0)
-                            compressed_data = compressed_content.read()
-                          return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(compressed_data)}\r\n\r\n{compressed_data.strip()}"
+                        compressed_data = compressed_content.getvalue()
+                        return b"HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: " + str(len(compressed_data)).encode() + b"\r\n\r\n" + compressed_data
                     
                     return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
 
