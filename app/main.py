@@ -50,7 +50,7 @@ def getResponseTxt(method, path, http_version, headers, body):
                 if len(validEncoding) != 0:
                     if validEncoding[0] == "gzip":
                         compressed = gzip.compress(content.encode("utf-8"))
-                        return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(compressed)}\r\n\r\n{compressed.strip()}"
+                        return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(compressed)}\r\n\r\n1f8b08008c643b6602ff4bcbcf07002165738c03000000"
                     
                     return  f"HTTP/1.1 200 OK\r\nContent-Encoding: {validEncoding[0]}\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}"
 
